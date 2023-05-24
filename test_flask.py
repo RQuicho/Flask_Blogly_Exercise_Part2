@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from app import app
-from models import db, User
+from models import db, User, Post
 
 # Use test database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly_test'
@@ -16,6 +16,8 @@ app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
 
 db.drop_all()
 db.create_all()
+
+# **************** USERS ***********************************
 
 class UserViewsTestCase(TestCase):
     """Tests for views for Users"""
@@ -79,5 +81,51 @@ class UserViewsTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn('<button>Edit</button>', html)
             self.assertIn(self.user.first_name, html)
+
+# **************** POSTS ***********************************
+
+class PostViewsTestCase(TestCase):
+    """Tests for views of posts"""
+
+    def setUp(self):
+        """Add sample post"""
+
+        Post.query.delete()
+
+        post = Post(title='Test Post', content='This is a test post')
+        db.session.add(post)
+        db.session.commit()
+
+        self.post_id = post.id
+        self.post = post
+
+    def tearDown(self):
+        """Clean up any fouled transactions (db.session.add() that you didn't want to commit)"""
+
+        db.session.rollback()
+
+    def test_show_post(self):
+        """Test if post is shown"""
+
+        with app.test_client() as client:
+            resp = client.get(f'/posts/{self.post_id}')
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Test Post</h1>', html)
+
+    def test_edit_post(self):
+        """Test if edit form displays"""
+
+        with app.test_client() as client:
+            resp = client.get(f'/posts/{self.post_id}/edit')
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Edit Post</h1>', html)
+
+  
+
+
 
 

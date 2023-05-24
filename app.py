@@ -36,6 +36,7 @@ def create_new_user():
 
 	return render_template('create_user.html')
 
+
 @app.route('/users/new', methods=['POST'])
 def add_new_user():
 	"""Adds new user to the list of existing users"""
@@ -50,6 +51,7 @@ def add_new_user():
 
 	return redirect('/users')
 
+
 @app.route('/users/<int:user_id>')
 def show_user(user_id):
 	"""Shows details about a specific user"""
@@ -58,12 +60,14 @@ def show_user(user_id):
 	posts = Post.query.filter_by(user_id=user_id)
 	return render_template('user_details.html', user=user, posts=posts)
 
+
 @app.route('/users/<int:user_id>/edit')
 def edit_user(user_id):
 	"""Shows edit form for user"""
 
 	user = User.query.get_or_404(user_id)
 	return render_template('edit_user.html', user=user)
+
 
 @app.route('/users/<int:user_id>/edit', methods=['POST'])
 def update_user(user_id):
@@ -79,6 +83,7 @@ def update_user(user_id):
 	db.session.commit()	
 
 	return redirect('/users')
+
 
 @app.route('/users/<int:user_id>/delete')
 def delete_user(user_id):
@@ -99,6 +104,7 @@ def new_post(user_id):
 	user = User.query.get_or_404(user_id)
 	return render_template('create_post.html', user=user)
 
+
 @app.route('/users/<int:user_id>/posts/new', methods=['POST'])
 def add_new_post(user_id):
 	"""Adds new post to list of posts by existing user"""
@@ -115,6 +121,7 @@ def add_new_post(user_id):
 
 	return redirect(f'/users/{user_id}')
 
+
 @app.route('/posts/<int:post_id>')
 def show_post(post_id):
 	"""Shows post created by a user"""
@@ -122,12 +129,14 @@ def show_post(post_id):
 	post = Post.query.get_or_404(post_id)
 	return render_template('post_details.html', post=post)
 
+
 @app.route('/posts/<int:post_id>/edit')
 def edit_post(post_id):
 	"""Shows form to edit existing post"""
 
 	post = Post.query.get_or_404(post_id)
 	return render_template('edit_post.html', post=post)
+
 
 @app.route('/posts/<int:post_id>/edit', methods=['POST'])
 def update_post(post_id):
@@ -144,6 +153,7 @@ def update_post(post_id):
 
 	return redirect(f'/posts/{post_id}')
 
+
 @app.route('/posts/<int:post_id>/delete')
 def delete_post(post_id):
 	"""Deletes post from db"""
@@ -154,6 +164,7 @@ def delete_post(post_id):
 
 	return redirect(f'/users')
 	# return redirect(f'/users/{user_id}')
+
 
 
 
