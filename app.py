@@ -119,7 +119,42 @@ def add_new_post(user_id):
 def show_post(post_id):
 	"""Shows post created by a user"""
 
-	posts = Post.query.filter_by(post_id)
-	return render_template('post_details.html', posts=posts)
+	post = Post.query.get_or_404(post_id)
+	return render_template('post_details.html', post=post)
+
+@app.route('/posts/<int:post_id>/edit')
+def edit_post(post_id):
+	"""Shows form to edit existing post"""
+
+	post = Post.query.get_or_404(post_id)
+	return render_template('edit_post.html', post=post)
+
+@app.route('/posts/<int:post_id>/edit', methods=['POST'])
+def update_post(post_id):
+	"""Updates existing post"""
+
+	post = Post.query.get_or_404(post_id)
+
+	post.title = request.form['title']
+	post.content = request.form['content']
+	post.user_id = post.user.id
+
+	db.session.add(post)
+	db.session.commit()
+
+	return redirect(f'/posts/{post_id}')
+
+@app.route('/posts/<int:post_id>/delete')
+def delete_post(post_id):
+	"""Deletes post from db"""
+
+	# user = User.query.get_or_404(user_id)
+	post = Post.query.filter_by(id=post_id).delete()
+	db.session.commit()
+
+	return redirect(f'/users')
+	# return redirect(f'/users/{user_id}')
+
+
 
 
